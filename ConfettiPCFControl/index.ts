@@ -4,6 +4,7 @@ import {IInputs, IOutputs} from "./generated/ManifestTypes";
 export class ConfettiPCFControl implements ComponentFramework.StandardControl<IInputs, IOutputs> {
 
     private myCanvas:HTMLElement;
+    private _notifyOutputChanged: () => void;
     /**
      * Empty constructor.
      */
@@ -22,9 +23,7 @@ export class ConfettiPCFControl implements ComponentFramework.StandardControl<II
      */
     public init(context: ComponentFramework.Context<IInputs>, notifyOutputChanged: () => void, state: ComponentFramework.Dictionary, container:HTMLDivElement): void
     {
-        var duration = 15 * 1000;
-        var animationEnd = Date.now() + duration;
-        var defaults = { startVelocity: 30, spread: 360, ticks: 60, zIndex: 0 };
+      this._notifyOutputChanged = notifyOutputChanged;
         const confetti = require('canvas-confetti');
         this.myCanvas = document.createElement('canvas');
         this.myCanvas.style.height = "100%";
@@ -45,6 +44,16 @@ export class ConfettiPCFControl implements ComponentFramework.StandardControl<II
      */
     public updateView(context: ComponentFramework.Context<IInputs>): void
     {
+      const confetti = require('canvas-confetti');
+      var myConfetti = confetti.create(this.myCanvas, {
+        resize:true,
+        useWorker: true
+      });
+      myConfetti({  
+        origin: { y: 1.2 },
+        spread: context.parameters.spread.raw,
+      });
+
     }
 
     /**
